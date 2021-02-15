@@ -1,0 +1,20 @@
+---
+
+name: Setup
+on:
+  push:
+    branches:
+      - main
+jobs:
+  setup:
+    if: github.repository.name != 'go-lib'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cat readme-template.md | ruby -anlpe '$_.gsub!(%<${repo.name}>, %<${{ github.repository.name }}>)' > README.md
+      - name: Create setup PR
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: 'docs: update installed repository info'
+          branch: complete-setup
